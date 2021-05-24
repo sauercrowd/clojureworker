@@ -1,0 +1,15 @@
+name: clojureflare
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install deps
+      run: |
+        sudo apt update && sudo apt install -y leiningen
+    - name: lein test
+      run: |
+        lein test
