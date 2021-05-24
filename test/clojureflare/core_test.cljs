@@ -18,4 +18,10 @@
     (cljs.test/is (= cr {:path "/api/v1/test"}))))
 
 
+(cljs.test/deftest test-handler-match
+  (let [req #js {:url "http://localhost/api/v1/test"}
+        routes [(clojureflare.core/route "GET" "/api/v1/test" "hello-world")]
+        expectation {:body "hello-world" :params {"status" 200}}]
+    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
+
 (cljs.test/run-tests)

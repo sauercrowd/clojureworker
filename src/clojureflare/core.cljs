@@ -10,9 +10,9 @@
         (map #(vector (:path %) %) routes)))
 
 (defmulti routefn type)
-(defmethod routefn String [resp] (make-response {:body resp :params {:status 200}}))
-(defmethod routefn PersistentArrayMap [resp] (make-response resp))
-(defmethod routefn :default [resp] (make-response (apply resp [])))
+(defmethod routefn String [resp] {:body resp :params {:status 200}})
+(defmethod routefn PersistentArrayMap [resp] (identity resp))
+(defmethod routefn :default [resp] (apply resp []))
 
 
 (defn handleRequest [req routes]
@@ -21,7 +21,7 @@
     (if (contains? r (:path req))
       (routefn
         (get r (:path req)))
-      (make-response {:params {:status 404} :body "Not Found"}))))
+      {:params {:status 404} :body "Not Found"})))
  
 
 (defn extract-path [url]
@@ -32,4 +32,4 @@
    })
 
 (defn worker [& routes] (js/addEventListener "fetch" 
-  #(.respondWith % (handleRequest (convert-request (.-request %)) routes))))
+  #(.respondWith % (make-response (handleRequest (convert-request (.-request %)) routes)))))
