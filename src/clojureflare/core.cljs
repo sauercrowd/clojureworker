@@ -10,17 +10,16 @@
         (map #(vector (:path %) %) routes)))
 
 (defmulti routefn type)
-(defmethod routefn String [resp] {:body resp :params {:status 200}})
-(defmethod routefn PersistentArrayMap [resp] (identity resp))
+(defmethod routefn js/String [resp] {:body resp :params {:status 200}})
+(defmethod routefn PersistentArrayMap [resp] (.stringify js/JSON (clj->js resp)))
 (defmethod routefn :default [resp] (apply resp []))
 
 
 (defn handleRequest [req routes]
-  (.log js/console (:path req))
   (let [r (assemble-handlers routes)]
     (if (contains? r (:path req))
       (routefn
-        (get r (:path req)))
+        (:handler (get r (:path req))))
       {:params {:status 404} :body "Not Found"})))
  
 
@@ -28,8 +27,7 @@
   (.-pathname (new js/URL url)))
 
 (defn convert-request [req]
-  {:path (extract-path (.-url req))
-   })
+  {:path (extract-path (.-url req))})
 
 (defn worker [& routes] (js/addEventListener "fetch" 
   #(.respondWith % (make-response (handleRequest (convert-request (.-request %)) routes)))))

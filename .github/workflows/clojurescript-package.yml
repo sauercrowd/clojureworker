@@ -12,4 +12,4 @@ jobs:
         sudo apt update && sudo apt install -y leiningen
     - name: lein test
       run: |
-        lein test
+        lein test | grep "All tests succeeded!"
