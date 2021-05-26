@@ -12,7 +12,7 @@ jobs:
         sudo apt update && sudo apt install -y leiningen
     - name: lein build
       run: |
-        lein cljsbuild once
+        lein cljsbuild once production
   test:
     runs-on: ubuntu-latest
     steps:
