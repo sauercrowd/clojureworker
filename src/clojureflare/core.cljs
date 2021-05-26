@@ -3,7 +3,9 @@
 (defn route [method path fn] {:method method :path path :handler fn})
 
 (defn make-response [resp]
-  (js/Response. (:body resp) {"status" (get-in resp [:params :status])}))
+  (js/Response. (:body resp)
+                {"status" (get-in resp [:params :status])
+                 "headers" (get-in resp [:params :headers])}))
 
 (defn assemble-handlers [routes]
   (into {}
