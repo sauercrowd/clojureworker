@@ -11,7 +11,9 @@
 
 (defmulti routefn type)
 (defmethod routefn js/String [resp] {:body resp :params {:status 200}})
-(defmethod routefn PersistentArrayMap [resp] (.stringify js/JSON (clj->js resp)))
+(defmethod routefn PersistentArrayMap [resp]
+  {:body (.stringify js/JSON (clj->js resp))
+  :params {:status 200 :headers { "Content-Type" "application/json"}}})
 (defmethod routefn :default [resp] (apply resp []))
 
 
