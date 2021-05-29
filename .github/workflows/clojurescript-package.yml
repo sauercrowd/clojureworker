@@ -33,7 +33,7 @@ jobs:
     - name: Get Wrangler
       run:
           cd example-worker &&
-          curl https://github.com/cloudflare/wrangler/releases/download/v1.17.0/wrangler-v1.17.0-x86_64-unknown-linux-musl.tar.gz -o ./wrangler &&
+          curl -L https://github.com/cloudflare/wrangler/releases/download/v1.17.0/wrangler-v1.17.0-x86_64-unknown-linux-musl.tar.gz -o ./wrangler &&
           chmod +x ./wrangler
     - name: lein jar
       run: lein jar
