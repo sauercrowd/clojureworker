@@ -30,6 +30,10 @@ jobs:
     - name: Install deps
       run: |
         sudo apt update && sudo apt install -y leiningen
+    - name: Get Wrangler
+      run:
+          curl https://github.com/cloudflare/wrangler/releases/download/v1.17.0/wrangler-v1.17.0-x86_64-unknown-linux-musl.tar.gz -o /usr/bin/wrangler
+          chmod +x /usr/bin/wrangler
     - name: lein jar
       run: lein jar
     - name: compile example
