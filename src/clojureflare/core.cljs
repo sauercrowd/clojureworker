@@ -7,9 +7,13 @@
                 {"status" (get-in resp [:params :status])
                  "headers" (get-in resp [:params :headers])}))
 
+(defn get-key-from-req [req]
+  (str (:method req) (:path req)))
+
 (defn assemble-handlers [routes]
-  (into {}
-        (map #(vector (:path %) %) routes)))
+  (into {} (map
+            (juxt get-key-from-req identity) routes)))
+
 
 (defmulti routefn type)
 (defmethod routefn js/String [resp] {:body resp :params {:status 200}})
@@ -20,18 +24,20 @@
 
 
 (defn handleRequest [req routes]
-  (let [r (assemble-handlers routes)]
-    (if (contains? r (:path req))
+  (let [rendered-routes (assemble-handlers routes)
+        req-key (get-key-from-req req)]
+    (if (contains? rendered-routes req-key )
       (routefn
-        (:handler (get r (:path req))))
+        (:handler (get rendered-routes req-key)))
       {:params {:status 404} :body "Not Found"})))
  
 
 (defn extract-path [url]
-  (.-pathname (new js/URL url)))
+  (.-pathname (js/URL. url)))
 
 (defn convert-request [req]
-  {:path (extract-path (.-url req))})
+  {:path (extract-path (.-url req))
+   :method (.-method req)})
 
 (defn worker [& routes] (js/addEventListener "fetch" 
   #(.respondWith % (make-response (handleRequest (convert-request (.-request %)) routes)))))

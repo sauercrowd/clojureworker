@@ -14,27 +14,27 @@
 
                                         ; convert request from JS object
 (cljs.test/deftest convert-request
-  (let [cr (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test"})]
-    (cljs.test/is (= cr {:path "/api/v1/test"}))))
+  (let [cr (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET"})]
+    (cljs.test/is (= cr {:path "/api/v1/test" :method "GET"}))))
 
 
                                         ; match an entire request to it's route
 (cljs.test/deftest test-handler-match
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test"})
+  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET"})
         routes [(clojureflare.core/route "GET" "/api/v1/test" "hello-world")]
         expectation {:body "hello-world" :params {:status 200}}]
     (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
                                         ; check if a request doesn't match any route
 (cljs.test/deftest test-handler-404
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/garbled"})
+  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/garbled" :method "GET"})
         routes [(clojureflare.core/route "GET" "/api/v1/test" "hello")]
         expectation {:body "Not Found" :params {:status 404}}]
     (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
                                         ; test if a map gets converted into JSON
 (cljs.test/deftest test-json-route
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test"})
+  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET"})
         routes [(clojureflare.core/route "GET" "/api/v1/test" {:userid 1 :score 5})]
         expectation {:body (.stringify js/JSON (clj->js {:userid 1 :score 5}))
                      :params {:status 200 :headers {"Content-Type" "application/json"}}}]
@@ -42,7 +42,7 @@
 
                                         ; test if a function route
 (cljs.test/deftest test-fn-route
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test"})
+  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET"})
         routes [(clojureflare.core/route "GET" "/api/v1/test" #(identity {:body "nice function" :params {:status 200}}))]
         expectation {:body "nice function" :params {:status 200}}]
     (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
