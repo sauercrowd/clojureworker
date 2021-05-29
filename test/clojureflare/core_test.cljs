@@ -25,6 +25,13 @@
         expectation {:body "hello-world" :params {:status 200}}]
     (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
+                                        ; make sure method mismatch results in 404
+(cljs.test/deftest test-handler-method-mismatch
+  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "POST"})
+        routes [(clojureflare.core/route "GET" "/api/v1/test" "hello-world")]
+        expectation {:body "Not Found" :params {:status 404}}]
+    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
+
                                         ; check if a request doesn't match any route
 (cljs.test/deftest test-handler-404
   (let [req (clojureflare.core/convert-request #js {:url "http://localhost/garbled" :method "GET"})
