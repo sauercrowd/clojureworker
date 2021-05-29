@@ -32,8 +32,8 @@ jobs:
         sudo apt update && sudo apt install -y leiningen
     - name: Get Wrangler
       run:
-          cd example-worker
-          curl https://github.com/cloudflare/wrangler/releases/download/v1.17.0/wrangler-v1.17.0-x86_64-unknown-linux-musl.tar.gz -o ./wrangler
+          cd example-worker &&
+          curl https://github.com/cloudflare/wrangler/releases/download/v1.17.0/wrangler-v1.17.0-x86_64-unknown-linux-musl.tar.gz -o ./wrangler &&
           chmod +x ./wrangler
     - name: lein jar
       run: lein jar
@@ -41,6 +41,6 @@ jobs:
       run: cd example-worker && lein compile
     - name: run worker
       run: |
-          cd example-worker
+          cd example-worker &&
           ./wrangler preview -u https://example.com/v1/api/test --headless | grep 'cool response'
 
