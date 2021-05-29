@@ -39,7 +39,7 @@ jobs:
       run: lein jar
     - name: compile example
       run: cd example-worker && lein compile
-    - name: run worker
+    - name: run worker and check response
       run: |
           cd example-worker &&
           ./dist/wrangler preview -u https://example.com/v1/api/test --headless | grep 'cool response'
