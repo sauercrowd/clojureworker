@@ -15,20 +15,23 @@
             (juxt get-key-from-req identity) routes)))
 
 
-(defmulti routefn type)
-(defmethod routefn js/String [resp] {:body resp :params {:status 200}})
-(defmethod routefn PersistentArrayMap [resp]
+(defmulti routefn (fn [resp req] (type resp)))
+(defmethod routefn js/String [resp _] {:body resp :params {:status 200}})
+
+(defmethod routefn PersistentArrayMap [resp _]
   {:body (.stringify js/JSON (clj->js resp))
-  :params {:status 200 :headers { "Content-Type" "application/json"}}})
-(defmethod routefn :default [resp] (apply resp []))
+   :params {:status 200
+            :headers { "Content-Type" "application/json"}}})
+
+(defmethod routefn :default [resp req] (apply resp [req]))
 
 
 (defn handleRequest [req routes]
   (let [rendered-routes (assemble-handlers routes)
         req-key (get-key-from-req req)]
-    (if (contains? rendered-routes req-key )
+    (if (contains? rendered-routes req-key)
       (routefn
-        (:handler (get rendered-routes req-key)))
+        (:handler (get rendered-routes req-key)) req)
       {:params {:status 404} :body "Not Found"})))
  
 
@@ -37,7 +40,9 @@
 
 (defn convert-request [req]
   {:path (extract-path (.-url req))
-   :method (.-method req)})
+   :method (.-method req)
+   :headers (.-headers req)
+   :body (.text req)})
 
 (defn worker [& routes] (js/addEventListener "fetch" 
   #(.respondWith % (make-response (handleRequest (convert-request (.-request %)) routes)))))
