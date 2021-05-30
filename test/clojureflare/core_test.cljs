@@ -15,9 +15,11 @@
     (cljs.test/is (= ep "/api/v1/test"))))
 
                                         ; convert request from JS object
+(defn extract-relevant [m] (select-keys m [:path :headers :method]))
+
 (cljs.test/deftest convert-request
   (let [cr (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn})]
-    (cljs.test/is (= cr {:path "/api/v1/test" :method "GET" :headers nil, :body (no-body-fn})))))
+    (cljs.test/is (= (extract-relevant cr) {:path "/api/v1/test" :method "GET" :headers nil}))))
 
 
                                         ; match an entire request to it's route

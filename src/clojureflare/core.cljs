@@ -42,7 +42,7 @@
   {:path (extract-path (.-url req))
    :method (.-method req)
    :headers (.-headers req)
-   :body (.text req)})
+   :body #(.text req)})
 
 (defn worker [& routes] (js/addEventListener "fetch" 
   #(.respondWith % (make-response (handleRequest (convert-request (.-request %)) routes)))))
