@@ -2,34 +2,34 @@
   (:require [cljs.core.async :refer [go chan <! >!]]
             [cljs.core.async.interop :refer-macros [<p!]]))
 
-(defn route [method path fn] {:method method :path path :handler fn})
+(defn route [method path handler] {:method method :path path :handler handler})
 
-(defn make-response [resp]
+(defn ^:private make-response [resp]
   (js/Response. (:body resp)
                 {"status" (get-in resp [:params :status])
                  "headers" (get-in resp [:params :headers])}))
 
-(defn get-key-from-req [req]
+(defn ^:private get-key-from-req [req]
   (str (:method req) (:path req)))
 
-(defn assemble-handlers [routes]
+(defn ^:private assemble-handlers [routes]
   (into {} (map
             (juxt get-key-from-req identity) routes)))
 
 
-(defmulti routefn (fn [resp req] (type resp)))
+(defmulti ^:private routefn (fn [resp req] (type resp)))
 
-(defmethod routefn js/String [resp _] {:body resp :params {:status 200}})
+(defmethod ^:private routefn js/String [resp _] {:body resp :params {:status 200}})
 
-(defmethod routefn PersistentArrayMap [resp _]
+(defmethod ^:private routefn PersistentArrayMap [resp _]
   {:body (.stringify js/JSON (clj->js resp))
    :params {:status 200
             :headers { "Content-Type" "application/json"}}})
 
-(defmethod routefn :default [resp req] (apply resp [req]))
+(defmethod ^:private routefn :default [resp req] (apply resp [req]))
 
 
-(defn handleRequest [req routes]
+(defn ^:private handleRequest [req routes]
   (let [rendered-routes (assemble-handlers routes)
         req-key (get-key-from-req req)]
     (if (contains? rendered-routes req-key)
@@ -38,11 +38,11 @@
       {:params {:status 404} :body "Not Found"})))
  
 
-(defn extract-path [url]
+(defn ^:private extract-path [url]
   (.-pathname (js/URL. url)))
 
 
-(defn convert-request [req req-chan]
+(defn ^:private convert-request [req req-chan]
   (go
     (let [body (<p! (.text req))]
       (>! req-chan
@@ -51,7 +51,7 @@
            :headers (.-headers req)
            :body body}))))
 
-(defn worker-event-listener [req routes]
+(defn ^:private worker-event-listener [req routes]
   (.respondWith req
     (js/Promise. (fn [resolve reject]
       (go
