@@ -3,6 +3,6 @@
 
 (clfl/worker
   (clfl/route "GET" "/v1/api/test" "cool response")
-  (clfl/route "POST" "/v1/api/ping" #(identity {:body(:body %)
+  (clfl/route "POST" "/v1/api/ping" #(identity {:body (:body %)
                                                 :params {:headers {}
-                                                         :status 200}})))
+                                                         :status 700}})))

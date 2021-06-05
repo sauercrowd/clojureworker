@@ -1,8 +1,9 @@
 (ns clojureflare.core-test
   (:require [cljs.test]
-            [clojureflare.core]))
+            [clojureflare.core]
+            [cljs.core.async :refer [go chan <! >!]]))
 
-(defn no-body-fn [] (identity nil))
+(defn no-body-fn [] (.resolve js/Promise nil))
 
                                         ; validate route schema
 (cljs.test/deftest simple-route
@@ -17,54 +18,92 @@
                                         ; convert request from JS object
 (defn extract-relevant [m] (select-keys m [:path :headers :method]))
 
+(defn check-req [routes chan expected done]
+  (go
+    (let [cr (<! chan)]
+      (cljs.test/is (= (clojureflare.core/handleRequest cr routes) expected))
+      (done))))
+ 
 (cljs.test/deftest convert-request
-  (let [cr (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn})]
-    (cljs.test/is (= (extract-relevant cr) {:path "/api/v1/test" :method "GET" :headers nil}))))
+  (cljs.test/async done
+    (go
+      (let [req-ch (chan)
+            _ (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn} req-ch)
+            cr (<! req-ch)]
+        (cljs.test/is (= cr {:path "/api/v1/test" :method "GET" :headers nil :body nil}))
+        (done)))))
+;    (go
+;      (let [cr (<! req-ch)]
+;        (cljs.test/is (= (extract-relevant cr) {:path "/api/v1/test" :method "GET" :headers nil}))))))
 
 
                                         ; match an entire request to it's route
 (cljs.test/deftest test-handler-match
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn})
-        routes [(clojureflare.core/route "GET" "/api/v1/test" "hello-world")]
-        expectation {:body "hello-world" :params {:status 200}}]
-    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
+  (cljs.test/async done
+    (let [req-ch (chan)
+          _ (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn} req-ch)
+          routes [(clojureflare.core/route "GET" "/api/v1/test" "hello-world")]
+          expectation {:body "hello-world" :params {:status 200}}
+          ] ;_ (clojureflare.core/handleRequest req routes)]
+      (check-req routes req-ch expectation done))))
+;    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
                                         ; make sure method mismatch results in 404
 (cljs.test/deftest test-handler-method-mismatch
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "POST" :text no-body-fn})
-        routes [(clojureflare.core/route "GET" "/api/v1/test" "hello-world")]
-        expectation {:body "Not Found" :params {:status 404}}]
-    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
+  (cljs.test/async done    
+    (let [req-ch (chan)
+          req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "POST" :text no-body-fn} req-ch)
+          routes [(clojureflare.core/route "GET" "/api/v1/test" "hello-world")]
+          expectation {:body "Not Found" :params {:status 404}}
+          _ (clojureflare.core/handleRequest req routes)]
+      (check-req routes req-ch expectation done))))
+;    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
                                         ; check if a request doesn't match any route
 (cljs.test/deftest test-handler-404
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/garbled" :method "GET" :text no-body-fn})
-        routes [(clojureflare.core/route "GET" "/api/v1/test" "hello")]
-        expectation {:body "Not Found" :params {:status 404}}]
-    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
+  (cljs.test/async done
+    (let [req-ch (chan)
+          req (clojureflare.core/convert-request #js {:url "http://localhost/garbled" :method "GET" :text no-body-fn} req-ch)
+          routes [(clojureflare.core/route "GET" "/api/v1/test" "hello")]
+          expectation {:body "Not Found" :params {:status 404}}
+          _ (clojureflare.core/handleRequest req routes)]
+      (check-req routes req-ch expectation done))))
+;    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
                                         ; test if a map gets converted into JSON
 (cljs.test/deftest test-json-route
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn})
-        routes [(clojureflare.core/route "GET" "/api/v1/test" {:userid 1 :score 5})]
-        expectation {:body (.stringify js/JSON (clj->js {:userid 1 :score 5}))
-                     :params {:status 200 :headers {"Content-Type" "application/json"}}}]
-    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
+  (cljs.test/async done    
+    (let [req-ch (chan)
+          req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn} req-ch)
+          routes [(clojureflare.core/route "GET" "/api/v1/test" {:userid 1 :score 5})]
+          expectation {:body (.stringify js/JSON (clj->js {:userid 1 :score 5}))
+                       :params {:status 200 :headers {"Content-Type" "application/json"}}}
+          _ (clojureflare.core/handleRequest req routes)]
+      (check-req routes req-ch expectation done))))
+;    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
                                         ; test if a function route
 (cljs.test/deftest test-fn-route
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn})
-        routes [(clojureflare.core/route "GET" "/api/v1/test" #(identity {:body "nice function" :params {:status 200}}))]
-        expectation {:body "nice function" :params {:status 200}}]
-    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
+  (cljs.test/async done
+    (let [req-ch (chan)
+          req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn} req-ch)
+          routes [(clojureflare.core/route "GET" "/api/v1/test" #(identity {:body "nice function" :params {:status 200}}))]
+          expectation {:body "nice function" :params {:status 200}}
+          _ (clojureflare.core/handleRequest req routes)]
+      (check-req routes req-ch expectation done))))
+;    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
                                         ; test if a function route with an arg
 (cljs.test/deftest test-fn-route-with-arg
-  (let [req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn})
-        routes [(clojureflare.core/route "GET" "/api/v1/test" #(identity
-                                                                {:body (str "nice function " (:path %)) :params {:status 200}}))]
-        expectation {:body "nice function /api/v1/test" :params {:status 200}}]
-    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
+  (cljs.test/async done
+    (let [req-ch (chan)
+          req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn} req-ch)
+          routes [(clojureflare.core/route "GET" "/api/v1/test" #(identity
+                                                                  {:body (str "nice function " (:path %)) :params {:status 200}}))]
+          expectation {:body "nice function /api/v1/test" :params {:status 200}}
+          _ (clojureflare.core/handleRequest req routes)]
+      (check-req routes req-ch expectation done))))
+;    (cljs.test/is (= expectation (clojureflare.core/handleRequest req routes)))))
 
 
 ;; test setup

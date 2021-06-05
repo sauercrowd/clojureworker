@@ -2,6 +2,7 @@
   :description "Example Clojure Cloudflare worker"
   :plugins [[lein-cljsbuild "1.1.8"]]
   :dependencies [[org.clojure/clojure "1.10.3"]
+                 [org.clojure/core.async "1.3.618"]
                  [org.clojure/clojurescript "1.10.339"]]
   :source-paths ["src"]
   :hooks [leiningen.cljsbuild]
