@@ -5,17 +5,17 @@
 ;; browser dependencies
 
 (clfl/simulate-worker
-  {:method "GET" :path "/v1/api/ping" :headers {} :body nil}
-  (clfl/route "GET" "/v1/api/test" "cool response")
-  (clfl/route "GET" "/v1/api/json" {:hello 1})
-  (clfl/route "POST" "/v1/api/ping" #(identity {:body (:body %)
+  {:method "GET" :path "/api/ping" :headers {} :body nil}
+  (clfl/route "GET" "/api/test" "cool response")
+  (clfl/route "GET" "/api/json" {:hello 1})
+  (clfl/route "POST" "/api/ping" #(identity {:body (:body %)
                                                 :headers {}
                                                 :status 200})))
 
 ;; use worker to connect the routes to the worker environment
 (clfl/worker
-  (clfl/route "GET" "/v1/api/test" "cool response")
-  (clfl/route "GET" "/v1/api/json" {:hello 1})
-  (clfl/route "POST" "/v1/api/ping" #(identity {:body (:body %)
+  (clfl/route "GET" "/api/test" "cool response")
+  (clfl/route "GET" "/api/json" {:hello 1})
+  (clfl/route "POST" "/api/ping" #(identity {:body (:body %)
                                                 :headers {}
                                                 :status 200})))
