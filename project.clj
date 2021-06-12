@@ -1,6 +1,6 @@
-(defproject clojureflare "0.1.0-SNAPSHOT"
+(defproject org.clojars.sauercrowd.clojureflare "0.1.0-SNAPSHOT"
   :description "Clojurescript library for Cloudflare Workers"
-  :url "clojureflare"
+  :url "https://github.com/sauercrowd/clojureflare"
   :plugins [[lein-cljsbuild "1.1.8"]
             [lein-codox "0.10.7"]]
   :codox {:language :clojurescript}
