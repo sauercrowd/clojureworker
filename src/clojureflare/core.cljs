@@ -72,9 +72,11 @@
               _ (convert-request (.-request req) req-chan)
               converted-req (<! req-chan)]
           (resolve
-            (-> converted-req
-                (handle-request routes)
-                (make-response)))))))))
+            (make-response
+              (let [resp (handle-request routes converted-req)]
+                  (if (instance? js/Promise resp)
+                    (<p! resp)
+                    (identity resp)))))))))))
 
 (defn simulate-worker
   "A function to simplify REPL development by simulating how a request would be routed
