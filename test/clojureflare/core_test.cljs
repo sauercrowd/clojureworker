@@ -1,7 +1,8 @@
 (ns clojureflare.core-test
   (:require [cljs.test]
             [clojureflare.core]
-            [cljs.core.async :refer [go chan <! >!]]))
+            [cljs.core.async :refer [go chan <! >!]]
+            [cljs.core.async.interop :refer-macros [<p!]]))
 
 (defn no-body-fn [] (.resolve js/Promise nil))
 
@@ -20,8 +21,10 @@
 
 (defn check-req [routes chan expected done]
   (go
-    (let [cr (<! chan)]
-      (cljs.test/is (= (clojureflare.core/handle-request cr routes) expected))
+    (let [resp (clojureflare.core/handle-request (<! chan) routes)]
+      (if (instance? js/Promise resp)
+        (cljs.test/is (= (<p! resp) expected))
+        (cljs.test/is (= resp expected)))
       (done))))
  
 (cljs.test/deftest convert-request
@@ -94,6 +97,17 @@
           _ (clojureflare.core/handle-request req routes)]
       (check-req routes req-ch expectation done))))
 
+
+                                        ; test if a function route with a promise response
+(cljs.test/deftest test-fn-route-with-promise
+  (cljs.test/async done
+    (let [req-ch (chan)
+          req (clojureflare.core/convert-request #js {:url "http://localhost/api/v1/test" :method "GET" :text no-body-fn} req-ch)
+          routes [(clojureflare.core/route "GET" "/api/v1/test" #(js/Promise. (fn [resolv reject]
+                                                                  (resolv {:body (str "nice function " (:path %)) :status 200}))))]
+          expectation {:body "nice function /api/v1/test" :status 200}
+          _ (clojureflare.core/handle-request req routes)]
+      (check-req routes req-ch expectation done))))
 
 ;; test setup
 (defmethod cljs.test/report [:cljs.test/default :end-run-tests] [m]

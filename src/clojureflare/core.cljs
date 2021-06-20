@@ -66,17 +66,17 @@
 
 (defn ^:private worker-event-listener [req routes]
   (.respondWith req
-    (js/Promise. (fn [resolve reject]
+    (js/Promise. (fn [resolv reject]
       (go
         (let [req-chan (chan)
               _ (convert-request (.-request req) req-chan)
               converted-req (<! req-chan)]
-          (resolve
+          (resolv
             (make-response
-              (let [resp (handle-request routes converted-req)]
-                  (if (instance? js/Promise resp)
-                    (<p! resp)
-                    (identity resp)))))))))))
+              (let [resp (handle-request converted-req routes)]
+                (if (instance? js/Promise resp)
+                  (<p! resp)
+                  (identity resp)))))))))))
 
 (defn simulate-worker
   "A function to simplify REPL development by simulating how a request would be routed
