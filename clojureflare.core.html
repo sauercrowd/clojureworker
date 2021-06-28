@@ -10,6 +10,7 @@ handler: either a
     - :body (required, string)
     - :headers (map, optional, default {})
     - :status (integer, optional, default 200)
+    Alternatively it can return a promise that resolves to the map mentioned above. Promise rejections are currently not handled.
     If the function takes a parameter it will be the request made, using the same structure as above.</pre></div></div><div class="public anchor" id="var-simulate-worker"><h3>simulate-worker</h3><div class="usage"><code>(simulate-worker req &amp; routes)</code></div><div class="doc"><pre class="plaintext">A function to simplify REPL development by simulating how a request would be routed
 and handled. The requests are maps with the keywords :status :headers :body :method, similiar as described in
 the route function</pre></div></div><div class="public anchor" id="var-worker"><h3>worker</h3><div class="usage"><code>(worker &amp; routes)</code></div><div class="doc"><pre class="plaintext">Takes all routes and registers the fetch event from the worker environment.
