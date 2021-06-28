@@ -13,6 +13,7 @@
       - :body (required, string)
       - :headers (map, optional, default {})
       - :status (integer, optional, default 200)
+      Alternatively it can return a promise that resolves to the map mentioned above. Promise rejections are currently not handled.
       If the function takes a parameter it will be the request made, using the same structure as above."
   [method path handler]
   {:method method :path path :handler handler})
