@@ -1,4 +1,4 @@
-(defproject org.clojars.sauercrowd.clojureflare "0.0.1"
+(defproject org.clojars.sauercrowd/clojureflare "0.0.1"
   :description "Clojurescript library for Cloudflare Workers"
   :url "https://github.com/sauercrowd/clojureflare"
   :plugins [[lein-cljsbuild "1.1.8"]

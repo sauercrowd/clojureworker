@@ -6,7 +6,7 @@
                  [org.clojure/clojurescript "1.10.339"]]
   :source-paths ["src"]
   :hooks [leiningen.cljsbuild]
-  :resource-paths ["../target/org.clojars.sauercrowd.clojureflare-0.0.1.jar"]
+  :resource-paths ["../target/clojureflare-0.0.1.jar"]
   :cljsbuild {
     :builds {:production
                {:source-paths ["src"]
