@@ -92,3 +92,8 @@ found 0 vulnerabilities
 ```
 
 That's all!
+
+Check out the [example clojure worker](src/my_worker/core.cljs) to see how promises and maps are returned, how you can provide a custom handler and how to use `simulate-worker` to ease the development process.
+
+
+Note: `wrangler_tests.sh` is part of the integration test pipeline, validating that the example worker can run and returns the expected responses.
