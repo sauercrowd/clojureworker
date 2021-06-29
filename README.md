@@ -5,11 +5,6 @@
 A Clojurescript library to simplify the use with Cloudflare workers. Supports both synchronous and asynchronous responses. 
 Clojureflare focuses on providing a simple way to use Clojurescript with Cloudflare workers.
 
-## Prerequisites
-
-- [leiningen](https://leiningen.org/) (or your build tool of choice)
-- [wrangler](https://developers.cloudflare.com/workers/cli-wrangler/install-update) 
-
 ## Usage
 
 Clojureflare currently provides three functions, documented [here](https://cljdoc.org/d/org.clojars.sauercrowd/clojureflare/0.0.1/api/clojureflare.core).
@@ -33,13 +28,4 @@ while the response map should similar to
 
 ### Example Worker
 
-A simple worker could look like this
-
-```
-(ns my-worker.core
-  (:require [clojureflare.core :as clfl]))
-
-(clfl/worker
-  (clfl/route "GET" "/api/string-as-html" "cool response"))
-```
-
+Head over to the [example-worker](/example-worker) to create your first Clojurescript worker.
