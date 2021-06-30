@@ -20,7 +20,7 @@ We'll start things of by creating the `project.clj` to define the structure of t
   :plugins [[lein-cljsbuild "1.1.8"]]
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.clojure/clojurescript "1.10.339"]
-                 [org.clojars.sauercrowd/clojureflare "0.0.1"]]
+                 [com.github.sauercrowd/clojureflare "0.0.1"]]
   :source-paths ["src"]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {
