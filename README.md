@@ -19,10 +19,16 @@ The handler can currently be one of three types:
 - a function, which will receive the request as a parameter and returns a response map
 
 The request is of the form of
-`{:path "/test" :body "{\"key\":1}" :headers {}}`
+
+```
+{:path "/test" :body "{\"key\":1}" :headers {}}
+```
 
 while the response map should similar to
-`{:body "{\"key\":1}" :headers {"Content-Type" "application/json"} :status 200}`
+
+```
+{:body "{\"key\":1}" :headers {"Content-Type" "application/json"} :status 200}
+```
 
 Additionally the handler function can return a promise which eventually resolves to the described map.
 
