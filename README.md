@@ -2,9 +2,7 @@
 
 [![Clojars Project](https://img.shields.io/clojars/v/com.github.sauercrowd/clojureflare.svg)](https://clojars.org/com.github.sauercrowd/clojureflare)
 
-A Clojurescript library to simplify the use with Cloudflare workers. Supports both synchronous and asynchronous responses. 
-Clojureflare focuses on providing a simple way to use Clojurescript with Cloudflare workers.
-
+A Clojurescript library to simplify the use with Cloudflare workers, focusing on simplicity.
 ## Usage
 
 Clojureflare currently provides three functions, documented [here](https://cljdoc.org/d/com.github.sauercrowd/clojureflare/0.0.1/api/clojureflare.core).
@@ -25,6 +23,8 @@ The request is of the form of
 
 while the response map should similar to
 `{:body "{\"key\":1}" :headers {"Content-Type" "application/json"} :status 200}`
+
+Additionally the handler function can return a promise which eventually resolves to the described map.
 
 ### Example Worker
 
