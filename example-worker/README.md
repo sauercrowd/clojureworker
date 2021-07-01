@@ -64,7 +64,7 @@ Next create a simple `package.json` outlining where te worker code can be found:
 }
 ```
 
-And now the wrangler configuration. To actually deploy it is it required to fill in the details as usually, but to run the preview we can leave the majority of fields empty:
+And now the wrangler configuration, `wrangler.toml`. To actually deploy it is it required to fill in the details as usually, but to run the preview we can leave the majority of fields empty:
 
 
 ```
