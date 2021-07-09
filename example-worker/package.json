@@ -1,4 +1,4 @@
 {
-  "name": "test-worker",
+  "name": "{{ project-name }}",
   "main": "target/worker.js"
 }
