@@ -6,7 +6,7 @@
                  [org.clojure/core.async "1.3.618"]]
   :source-paths ["src"]
   :hooks [leiningen.cljsbuild]
-  :resource-paths ["../target/example-worker/project.clj-0.0.1.jar"]
+  :resource-paths ["../target/clojureworker-0.0.1.jar"]
   :cljsbuild {
     :builds {:production
                {:source-paths ["src"]
