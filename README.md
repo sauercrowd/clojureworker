@@ -1,11 +1,11 @@
-# clojureflare
+# clojureworker
 
-[![Clojars Project](https://img.shields.io/clojars/v/com.github.sauercrowd/clojureflare.svg)](https://clojars.org/com.github.sauercrowd/clojureflare)
+[![Clojars Project](https://img.shields.io/clojars/v/com.github.sauercrowd/clojureworker.svg)](https://clojars.org/com.github.sauercrowd/clojureworker)
 
 A Clojurescript library to simplify the use with Cloudflare workers, focusing on simplicity.
 ## Usage
 
-Clojureflare currently provides three functions, documented [here](https://cljdoc.org/d/com.github.sauercrowd/clojureflare/0.0.1/api/clojureflare.core).
+Clojureflare currently provides three functions, documented [here](https://cljdoc.org/d/com.github.sauercrowd/clojureworker/0.0.1/api/clojureworker.core).
 
 - `worker`, which routes as arguments and attaches the dispatcher to the worker event
 - `simulate-worker`, serving the same purpose. It acceps a request as a first argument and instead of responding to a worker event returns the response, which simplifies repl development. It avoids any dependencies that would limit the runtime to the browser.

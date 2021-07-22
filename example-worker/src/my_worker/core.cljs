@@ -1,5 +1,5 @@
 (ns my-worker.core
-  (:require [clojureflare.core :as clfl]))
+  (:require [clojureworker :as clfl]))
 
 ;; use simulate-worker to get a response returned by the function without any
 ;; browser dependencies

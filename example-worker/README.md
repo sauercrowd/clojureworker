@@ -20,7 +20,7 @@ We'll start things of by creating the `project.clj` to define the structure of t
   :plugins [[lein-cljsbuild "1.1.8"]]
   :dependencies [[org.clojure/clojure "1.10.3"]
                  [org.clojure/clojurescript "1.10.339"]
-                 [com.github.sauercrowd/clojureflare "0.0.1"]]
+                 [com.github.sauercrowd/clojureworker "0.0.1"]]
   :source-paths ["src"]
   :hooks [leiningen.cljsbuild]
   :cljsbuild {
@@ -42,7 +42,7 @@ Now paste in
 
 ```
 (ns new-worker.core
-  (:require [clojureflare.core :as clfl]))
+  (:require [clojureworker.core :as clfl]))
 
 (clfl/worker
   (clfl/route "GET" "/worker" "hello from my worker"))

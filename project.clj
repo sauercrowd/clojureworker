@@ -1,6 +1,6 @@
-(defproject com.github.sauercrowd/clojureflare "0.0.1"
+(defproject com.github.sauercrowd/clojureworker "0.0.1"
   :description "Clojurescript library for Cloudflare Workers"
-  :url "https://github.com/sauercrowd/clojureflare"
+  :url "https://github.com/sauercrowd/clojureworker"
   :plugins [[lein-cljsbuild "1.1.8"]
             [lein-codox "0.10.7"]]
   :codox {:language :clojurescript}
@@ -20,7 +20,7 @@
               :compiler {:output-to "target/tests.js"
                          :optimizations :none
                          :target :nodejs
-                         :main clojureflare.core-test
+                         :main clojureworker.core-test
                          }}
               :production
                {:source-paths ["src"]

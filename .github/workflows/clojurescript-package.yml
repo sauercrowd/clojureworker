@@ -1,4 +1,4 @@
-name: clojureflare
+name: clojureworker
 
 on: [push]
 

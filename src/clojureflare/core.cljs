@@ -1,4 +1,4 @@
-(ns clojureflare.core
+(ns clojureworker.core
   (:require [cljs.core.async :refer [go chan <! >!]]
             [cljs.core.async.interop :refer-macros [<p!]]))
 
