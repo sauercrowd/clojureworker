@@ -1,8 +1,13 @@
 name = "test-worker"
-type = 'webpack'
+type = 'javascript'
 account_id = ''
 route = ''
 zone_id = ''
 usage_model = ''
 workers_dev = true
-target_type = "webpack"
+
+[build]
+command = "lein compile"
+
+[build.upload]
+format = "service-worker"
