@@ -9,7 +9,7 @@ As there are quite a few configuration files required I recommend using this dir
 
 - [leiningen](https://leiningen.org/)
 - [wrangler](https://developers.cloudflare.com/workers/cli-wrangler/install-update)
-
+- [calva][https://calva.io/getting-started/]
 ## Bootstrap the project
 
 We'll start things of by creating the `project.clj` to define the structure of the Clojurescript project and how it should be build.
